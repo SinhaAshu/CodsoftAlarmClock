@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TimePicker;
 
@@ -16,6 +17,9 @@ public class MainActivity extends AppCompatActivity {
 
     private TimePicker timePicker;
     private Button setAlarmButton;
+    private Button stopAlarmButton;
+    private PendingIntent pendingIntent;
+    private AlarmManager alarmManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,8 +28,10 @@ public class MainActivity extends AppCompatActivity {
 
         timePicker = findViewById(R.id.timePicker);
         setAlarmButton = findViewById(R.id.setAlarmButton);
+        stopAlarmButton = findViewById(R.id.stopAlarmButton);
 
         setAlarmButton.setOnClickListener(v -> setAlarm());
+        stopAlarmButton.setOnClickListener(v -> stopAlarm());
     }
 
     private void setAlarm() {
@@ -41,5 +47,17 @@ public class MainActivity extends AppCompatActivity {
         if (alarmManager != null) {
             alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
         }
+        stopAlarmButton.setVisibility(View.VISIBLE);
+    }
+    private void stopAlarm() {
+        if (alarmManager != null) {
+            alarmManager.cancel(pendingIntent);
+        }
+
+        Intent intent = new Intent(this, AlarmService.class);
+        stopService(intent);
+
+        stopAlarmButton.setVisibility(View.GONE);
     }
 }
+
